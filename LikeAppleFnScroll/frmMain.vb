@@ -12,8 +12,7 @@ Public Class frmMain
 
     WithEvents KeyboardHooker1 As New KeyboardHooker
     Sub KeybordHooker1_KeyDown(sender As Object, e As KeyBoardHookerEventArgs) Handles KeyboardHooker1.KeyDown
-        'txtLog.Text = CStr(e.vkCode)
-        putLog("キーコード：" & CStr(e.vkCode))
+        'putLog("キーコード：" & CStr(e.vkCode)) ' forDebug
         If StatusToolStripMenuItem.Checked = True Then
             If Convert.ToBoolean(GetAsyncKeyState(Keys.RControlKey)) Then
                 Select Case e.vkCode
