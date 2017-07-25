@@ -3,6 +3,7 @@
 Imports System.Runtime.InteropServices
 Public Class KeyboardHooker
 
+    Const WM_NULL As Integer = 0
     Const WM_KEYDOWN As Integer = &H100
     Const WM_KEYUP As Integer = &H101
 
@@ -16,6 +17,7 @@ Public Class KeyboardHooker
 
     Dim WH_KEYBOARD_LL As Integer = 13
     Shared hHook As Integer = 0
+    Shared KillingModifier As Boolean
 
     Private hookproc As CallBack
 
@@ -54,6 +56,17 @@ Public Class KeyboardHooker
         Public dwExtraInfo As Integer
     End Structure
 
+    <DllImport("User32.dll")>
+    Public Shared Function GetAsyncKeyState(vKey As Keys) As Short
+    End Function
+
+    <DllImport("User32.dll", CharSet:=CharSet.Auto, CallingConvention:=CallingConvention.StdCall)>
+    Public Shared Function PostMessage(ByVal hWnd As IntPtr, ByVal Msg As Integer, ByVal wParam As IntPtr, ByVal lParam As IntPtr) As Boolean
+    End Function
+
+    Protected KeyDownMsg As IntPtr = WM_KEYDOWN
+    Protected KeyUpMsg As IntPtr = WM_KEYUP
+    Protected HWND_BROADCAST As IntPtr = &HFFFF
 
     Public Function KeybordHookProc(
         ByVal nCode As Integer,
@@ -67,18 +80,68 @@ Public Class KeyboardHooker
         Dim hookStruct As New KeyboardLLHookStruct()
         hookStruct = CType(Marshal.PtrToStructure(lParam, hookStruct.GetType()), KeyboardLLHookStruct)
 
-        If wParam = New IntPtr(WM_KEYDOWN) Then
+        If KeyDownMsg.Equals(wParam) Or KeyUpMsg.Equals(wParam) Then
+            Dim _keyup As Boolean
+            _keyup = KeyUpMsg.Equals(wParam)
             Dim e As New KeyBoardHookerEventArgs
             e.vkCode = hookStruct.vkCode
-            RaiseEvent KeyDown(Me, e)
-            Return 0
-        End If
-
-        If wParam = New IntPtr(WM_KEYUP) Then
-            Dim e As New KeyBoardHookerEventArgs
-            e.vkCode = hookStruct.vkCode
-            RaiseEvent KeyUp(Me, e)
-            Return 0
+            Dim r As Integer
+            If e.vkCode = Keys.RControlKey Then
+                ' 右Ctrlキーが押されているかどうかを共有変数に代入
+                If _keyup Then
+                    If KillingModifier Then
+                        KillingModifier = False
+                    End If
+                Else
+                    If Not KillingModifier Then
+                        KillingModifier = True
+                    End If
+                End If
+                ' 右Ctrlキーは全部握りつぶす
+                Return 1
+            End If
+            If KillingModifier Then
+                ' 右Ctrlキーが押されている場合はキーコードに応じて動作を上書き
+                ' ここでキーコードを判定しているのは、イベントハンドラは戻り値を返せないため
+                Select Case e.vkCode
+                    Case Keys.Up
+                        If _keyup Then
+                            RaiseEvent KeyUp(Me, e)
+                        Else
+                            RaiseEvent KeyDown(Me, e)
+                        End If
+                        r = 1
+                    Case Keys.Down
+                        If _keyup Then
+                            RaiseEvent KeyUp(Me, e)
+                        Else
+                            RaiseEvent KeyDown(Me, e)
+                        End If
+                        r = 1
+                    Case Keys.Left
+                        If _keyup Then
+                            RaiseEvent KeyUp(Me, e)
+                        Else
+                            RaiseEvent KeyDown(Me, e)
+                        End If
+                        r = 1
+                    Case Keys.Right
+                        If _keyup Then
+                            RaiseEvent KeyUp(Me, e)
+                        Else
+                            RaiseEvent KeyDown(Me, e)
+                        End If
+                        r = 1
+                    Case Else
+                        r = 0
+                End Select
+            End If
+            If r = 0 Then
+                ' 処理されなかった場合は次のフックを呼ぶ
+                ' CallNextHookExに渡すフックハンドルは9xでのみ有効なのでNT系では0でもかまわない
+                r = CallNextHookEx(0, nCode, wParam, lParam)
+            End If
+            Return r
         End If
 
         Return CallNextHookEx(hHook, nCode, wParam, lParam)
@@ -91,6 +154,9 @@ Public Class KeyboardHooker
         Dim ret As Boolean = UnhookWindowsHookEx(hHook)
         If ret.Equals(False) Then
         End If
+        ' フック解除したことを通知
+        ' メッセージループが回らないと解放されないため
+        PostMessage(HWND_BROADCAST, WM_NULL, IntPtr.Zero, IntPtr.Zero)
     End Sub
 End Class
 

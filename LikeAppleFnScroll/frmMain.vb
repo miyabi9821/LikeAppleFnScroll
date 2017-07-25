@@ -14,22 +14,21 @@ Public Class frmMain
     Sub KeybordHooker1_KeyDown(sender As Object, e As KeyBoardHookerEventArgs) Handles KeyboardHooker1.KeyDown
         'putLog("キーコード：" & CStr(e.vkCode)) ' forDebug
         If StatusToolStripMenuItem.Checked = True Then
-            If Convert.ToBoolean(GetAsyncKeyState(Keys.RControlKey)) Then
-                Select Case e.vkCode
-                    Case Keys.Up
-                        putLog("Ctrl+Up=>PgUp")
-                        SendKeys.Send("{PGUP}")
-                    Case Keys.Down
-                        putLog("Ctrl+Down=>PgDown")
-                        SendKeys.Send("{PGDN}")
-                    Case Keys.Left
-                        putLog("Ctrl+Left=>Home")
-                        SendKeys.Send("{HOME}")
-                    Case Keys.Right
-                        putLog("Ctrl+Right=>End")
-                        SendKeys.Send("{END}")
-                End Select
-            End If
+            ' 右Ctrlキーのチェックはフック処理で既に行っているのでここではしない
+            Select Case e.vkCode
+                Case Keys.Up
+                    putLog("Ctrl+Up=>PgUp")
+                    SendKeys.Send("{PGUP}")
+                Case Keys.Down
+                    putLog("Ctrl+Down=>PgDown")
+                    SendKeys.Send("{PGDN}")
+                Case Keys.Left
+                    putLog("Ctrl+Left=>Home")
+                    SendKeys.Send("{HOME}")
+                Case Keys.Right
+                    putLog("Ctrl+Right=>End")
+                    SendKeys.Send("{END}")
+            End Select
         End If
 
     End Sub
