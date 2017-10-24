@@ -36,6 +36,9 @@ Partial Class frmMain
         '
         'txtLog
         '
+        Me.txtLog.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.txtLog.Location = New System.Drawing.Point(12, 12)
         Me.txtLog.Multiline = True
         Me.txtLog.Name = "txtLog"
@@ -47,7 +50,7 @@ Partial Class frmMain
         '
         Me.NotifyIcon.ContextMenuStrip = Me.ContextMenuStrip
         Me.NotifyIcon.Icon = CType(resources.GetObject("NotifyIcon.Icon"), System.Drawing.Icon)
-        Me.NotifyIcon.Text = "NotifyIcon1"
+        Me.NotifyIcon.Text = "LikeAppleFnScroll"
         Me.NotifyIcon.Visible = True
         '
         'ContextMenuStrip
@@ -61,24 +64,24 @@ Partial Class frmMain
         Me.StatusToolStripMenuItem.Checked = True
         Me.StatusToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked
         Me.StatusToolStripMenuItem.Name = "StatusToolStripMenuItem"
-        Me.StatusToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.StatusToolStripMenuItem.Size = New System.Drawing.Size(140, 22)
         Me.StatusToolStripMenuItem.Text = "有効/無効"
         '
         'WindowShowToolStripMenuItem
         '
         Me.WindowShowToolStripMenuItem.Name = "WindowShowToolStripMenuItem"
-        Me.WindowShowToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.WindowShowToolStripMenuItem.Size = New System.Drawing.Size(140, 22)
         Me.WindowShowToolStripMenuItem.Text = "ログ画面表示"
         '
         'ToolStripSeparator1
         '
         Me.ToolStripSeparator1.Name = "ToolStripSeparator1"
-        Me.ToolStripSeparator1.Size = New System.Drawing.Size(149, 6)
+        Me.ToolStripSeparator1.Size = New System.Drawing.Size(137, 6)
         '
         'ExitToolStripMenuItem
         '
         Me.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem"
-        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(140, 22)
         Me.ExitToolStripMenuItem.Text = "終了"
         '
         'frmMain
@@ -89,7 +92,7 @@ Partial Class frmMain
         Me.Controls.Add(Me.txtLog)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
-        Me.MaximizeBox = False
+        Me.MinimumSize = New System.Drawing.Size(480, 320)
         Me.Name = "frmMain"
         Me.ShowInTaskbar = False
         Me.Text = "AppleキーボードのFnとカーソルでスクロールするみたいなやつ"
