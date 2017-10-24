@@ -95,6 +95,7 @@ Partial Class frmMain
         Me.MinimumSize = New System.Drawing.Size(480, 320)
         Me.Name = "frmMain"
         Me.ShowInTaskbar = False
+        Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "AppleキーボードのFnとカーソルでスクロールするみたいなやつ"
         Me.WindowState = System.Windows.Forms.FormWindowState.Minimized
         Me.ContextMenuStrip.ResumeLayout(False)

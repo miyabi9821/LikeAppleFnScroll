@@ -49,6 +49,7 @@ Public Class frmMain
 
     'ウィンドウとタスクバーに表示
     Private Sub WindowShowToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles WindowShowToolStripMenuItem.Click
+        Me.WindowState = FormWindowState.Normal
         Me.ShowInTaskbar = True
         Me.Visible = True
     End Sub
@@ -60,20 +61,34 @@ Public Class frmMain
         e.Cancel = True
     End Sub
 
-    'セッション終了通知登録
     Private Sub frmMain_Load(sender As Object, e As EventArgs) Handles Me.Load
-        AddHandler SystemEvents.SessionEnding,
-            AddressOf SystemEvents_SessionEnding
+        'セッション終了通知登録
+        AddHandler SystemEvents.SessionEnding, AddressOf SystemEvents_SessionEnding
+
+        Me.ShowInTaskbar = False
+        Me.Visible = False
+        Me.Location = New Point(0, 0) '最小化で起動するとウィンドウ位置が変になるので強制変更
     End Sub
 
-    'セッション終了通知解除
     Private Sub frmMain_Closed(sender As Object, e As EventArgs) Handles Me.Closed
-        RemoveHandler SystemEvents.SessionEnding,
-            AddressOf SystemEvents_SessionEnding
+        'セッション終了通知解除
+        RemoveHandler SystemEvents.SessionEnding, AddressOf SystemEvents_SessionEnding
     End Sub
 
     'Windows終了やログオフ時はアプリケーションを終了する
     Private Sub SystemEvents_SessionEnding(ByVal sender As Object, ByVal e As SessionEndingEventArgs)
         Application.Exit()
+    End Sub
+
+    'ダブルクリックでウィンドウの表示／非表示を変更
+    Private Sub NotifyIcon_DoubleClick(sender As Object, e As EventArgs) Handles NotifyIcon.DoubleClick
+        If Me.Visible = False Then
+            Me.WindowState = FormWindowState.Normal
+            Me.ShowInTaskbar = True
+            Me.Visible = True
+        ElseIf Me.Visible = True Then
+            Me.ShowInTaskbar = False
+            Me.Visible = False
+        End If
     End Sub
 End Class
